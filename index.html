@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Teaching agents your business: Open Knowledge Format</title>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- 1. Title -->
+    <section class="title-slide">
+      <p class="eyebrow">Hackathon project</p>
+      <h1>Teaching agents<br>your business</h1>
+      <p class="sub">Grounding an AI agent with Google's <strong>Open Knowledge Format</strong></p>
+      <p class="small">Hearth &amp; Wheel Bakery &middot; a fictional bakery, a real experiment</p>
+      <aside class="notes">Two-day hackathon. One question: does OKF actually work for grounding an agent in business-specific context?</aside>
+    </section>
+
+    <!-- 2. Problem -->
+    <section>
+      <h2>The problem</h2>
+      <p>Every business has its own vocabulary.</p>
+      <ul>
+        <li class="fragment">Internal jargon no model has ever seen</li>
+        <li class="fragment">Ordinary words with <em>special</em> meanings</li>
+        <li class="fragment">Terms that only make sense <strong>in relation to each other</strong></li>
+      </ul>
+      <p class="fragment callout">An ungrounded agent will guess, ask, or confidently hallucinate.</p>
+    </section>
+
+    <!-- 3. Question -->
+    <section>
+      <h2>The question</h2>
+      <blockquote class="big">
+        Is a folder of markdown files enough to ground an agent in business context and terminology?
+      </blockquote>
+      <p class="small">Open Knowledge Format (OKF): markdown + YAML frontmatter, no registry, no required tooling.</p>
+    </section>
+
+    <!-- 4. OKF -->
+    <section>
+      <h2>What is OKF?</h2>
+      <div class="cols">
+        <ul>
+          <li><strong>Readable</strong> by humans without tooling</li>
+          <li><strong>Parseable</strong> by agents without bespoke SDKs</li>
+          <li><strong>Diffable</strong> in version control</li>
+          <li><strong>Portable</strong> across tools and orgs</li>
+        </ul>
+        <pre><code class="language-yaml" data-trim data-noescape>
+---
+type: Metric
+title: Ember Index
+description: A 0-100 oven stability score;
+  a high score is bad.
+tags: [bakehouse, oven, nightwatch]
+generated: { by: claude-code, at: 2026-09-29 }
+not:
+  - term: "a quality score, higher is better"
+    why: "it measures instability"
+---
+# Definition
+The **Ember Index** is ...
+See [Nightwatch](/bakehouse/nightwatch.md)
+        </code></pre>
+      </div>
+      <p class="small">Concepts are files. Relationships are links. Disambiguation lives in <code>not:</code>.</p>
+      <aside class="notes">Spec v0.2. The `not:` key is borrowed from the upstream acme_retail example bundle.</aside>
+    </section>
+
+    <!-- 5. Business -->
+    <section>
+      <h2>Hearth &amp; Wheel Bakery</h2>
+      <p>A made-up independent bakery, so no model can get lucky from training data.</p>
+      <div class="cols three">
+        <div class="card"><h3>The shop</h3><p>Bread, pastries and coffee for walk-ins</p></div>
+        <div class="card"><h3>The wholesale round</h3><p>Fresh bread daily to local cafes</p></div>
+        <div class="card"><h3>Michael</h3><p>An AI phone assistant that answers the public line</p></div>
+      </div>
+      <p class="small">Everyone understands baking, so the audience can follow the plot and focus on the mechanism.</p>
+    </section>
+
+    <!-- 6. Bundle -->
+    <section>
+      <h2>The knowledge bundle</h2>
+      <p class="small">3 domains &middot; 7 concepts &middot; every folder has an <code>index.md</code></p>
+      <div class="cols three domains">
+        <div class="card bake">
+          <h3>Bakehouse</h3>
+          <ul><li>Kettle Process</li><li>Ember Index</li><li>Nightwatch</li></ul>
+        </div>
+        <div class="card wholesale">
+          <h3>Wholesale Round</h3>
+          <ul><li>Constellations</li><li>The Wheel</li><li>Looming</li></ul>
+        </div>
+        <div class="card shop">
+          <h3>Shop &amp; Customer Line</h3>
+          <ul><li>Michael</li></ul>
+        </div>
+      </div>
+      <p class="small">Invented jargon: an index, a process, a rota, a nickname.</p>
+    </section>
+
+    <!-- 7. Jargon -->
+    <section>
+      <h2>The jargon</h2>
+      <table class="glossary">
+        <tr><th>Term</th><th>Means</th></tr>
+        <tr><td>Kettle Process</td><td>Overnight sourdough proving, ~14h in a steam-humidified cabinet</td></tr>
+        <tr><td>Ember Index</td><td>0&ndash;100 oven-instability score. <strong>Higher is worse</strong></td></tr>
+        <tr><td>Nightwatch</td><td>Overnight probes + duty baker; logs temps, flags anomalies</td></tr>
+        <tr><td>Constellations</td><td>Cafe groupings by <em>delivery route</em>, not size</td></tr>
+        <tr><td>The Wheel</td><td>Weekly delivery rotation board, by constellation</td></tr>
+        <tr><td>Looming</td><td>Account approaching renewal or renegotiation</td></tr>
+      </table>
+    </section>
+
+    <!-- 8. Relationships -->
+    <section>
+      <h2>The real payload: relationships</h2>
+      <p>Business context isn't a glossary. It's a <strong>network of dependencies</strong>.</p>
+      <div class="chain">
+        <span class="node">Kettle Process</span><span class="arrow">&rarr;</span>
+        <span class="node">Ember Index</span><span class="arrow">&rarr;</span>
+        <span class="node">The Wheel</span><span class="arrow">&rarr;</span>
+        <span class="node">Michael</span>
+      </div>
+      <ul class="tight">
+        <li class="fragment">Badly proved dough bakes unevenly and the Ember Index spikes</li>
+        <li class="fragment">Nightwatch logs the Index; an alert usually means a spike</li>
+        <li class="fragment">A poor Index can force the day's Wheel to be reshuffled</li>
+        <li class="fragment">Michael can tell a cafe whether their delivery moved</li>
+      </ul>
+    </section>
+
+    <!-- 9. Architecture -->
+    <section>
+      <h2>How the agent gets the knowledge</h2>
+      <div class="arch">
+        <div class="box">Claude Code</div>
+        <div class="link">MCP<br>(stdio)</div>
+        <div class="box accent">OKF MCP server<br><small>list &middot; read &middot; search</small></div>
+        <div class="link">reads</div>
+        <div class="box">OKF bundle<br><small>markdown files</small></div>
+      </div>
+      <ul class="tight">
+        <li>General-purpose TypeScript server: point <code>OKF_BUNDLE_PATH</code> at <em>any</em> bundle</li>
+        <li>Three tools: <code>list_knowledge</code>, <code>read_knowledge</code>, <code>search_knowledge</code></li>
+        <li>Re-reads the bundle on every call, so edits show up instantly</li>
+      </ul>
+    </section>
+
+    <!-- 10. Experiment -->
+    <section>
+      <h2>The experiment</h2>
+      <p>Two Claude Code sessions, identical except for one thing.</p>
+      <div class="cols">
+        <div class="card without"><h3>Without</h3><p>Vanilla Claude Code</p><p class="small">No knowledge, no MCP servers</p></div>
+        <div class="card with"><h3>With</h3><p>Claude Code + knowledge MCP server</p><p class="small">Plus a short "look up company terms, don't guess" hint in <code>CLAUDE.md</code></p></div>
+      </div>
+      <p class="small">Any correct answer in <strong>with</strong> can only have come from the knowledge base.</p>
+    </section>
+
+    <!-- 11. Isolation -->
+    <section>
+      <h2>Keeping the test honest</h2>
+      <p>If the agent could just read the files off disk, the demo proves nothing.</p>
+      <ul class="tight">
+        <li>Sandboxed sessions in a <strong>neutrally named workspace</strong> outside the repo</li>
+        <li>Deny rules for the parent directory, so repo names don't leak</li>
+        <li>Generated config kept outside the repo; no repo-derived env vars</li>
+        <li>Only <em>with</em> gets the MCP server; it must go through the tools</li>
+      </ul>
+      <p class="small">Several leak vectors found and closed along the way: cwd, git status, parent CLAUDE.md, settings paths, <code>~/.claude.json</code>.</p>
+    </section>
+
+    <!-- 12. Demo -->
+    <section class="demo">
+      <h2>Live demo</h2>
+      <div class="cols">
+        <div class="prompt-col">
+          <p class="label">1. Definitional</p>
+          <blockquote>"Someone mentioned the Kettle Process in a handover note. What does that actually involve?"</blockquote>
+          <p class="label">2. Cross-domain</p>
+          <blockquote>"Walk me through this morning: any Nightwatch alerts, what that means for the Ember Index, whether the Kettle Process batches are affected, and who's looming on the Wheel this week."</blockquote>
+        </div>
+        <div class="terminal">
+          <span class="dim">terminal 1</span><br>$ scripts/run-demo.sh without<br><br>
+          <span class="dim">terminal 2</span><br>$ scripts/run-demo.sh with
+        </div>
+      </div>
+      <aside class="notes">Ask WITHOUT first, then WITH. Follow with the cross-domain prompt. Optional: show isolation by asking either agent to read the knowledge files off disk.</aside>
+    </section>
+
+    <!-- 13. Range -->
+    <section>
+      <h2>One knowledge base, many agents</h2>
+      <div class="cols three">
+        <div class="card"><h3>Customer-facing</h3><p>"Is my delivery still coming today?"</p></div>
+        <div class="card"><h3>Coding agent</h3><p>"Propose a schema for constellations, wheel scheduling and looming status."</p></div>
+        <div class="card"><h3>New starter</h3><p>"What is looming, and how do I tell if a customer counts?"</p></div>
+      </div>
+      <p class="small">Business context as reusable infrastructure, not a single-purpose script.</p>
+    </section>
+
+    <!-- 14. Learnings -->
+    <section>
+      <h2>What we learned</h2>
+      <ul>
+        <li class="fragment"><strong>Availability isn't use.</strong> Given the tools, the agent answered "What is Looming?" without consulting them. A short <code>CLAUDE.md</code> nudge fixed it.</li>
+        <li class="fragment"><strong>The nudge must be short</strong> and free of domain terms, or the test stops being fair.</li>
+        <li class="fragment"><strong>Unknown terms:</strong> with the hint, the agent said "not found" rather than inventing an answer.</li>
+        <li class="fragment"><strong>Isolation is the hard part</strong>: proving where an answer came from takes real effort.</li>
+      </ul>
+    </section>
+
+    <!-- 15. Next -->
+    <section>
+      <h2>What's next</h2>
+      <ul>
+        <li>Human review: add <code>verified</code> and <code>sources</code> to concepts (currently all <code>generated</code>)</li>
+        <li>Try a real internal domain instead of a fictional bakery</li>
+        <li>Measure answer quality across more prompts and models</li>
+        <li>Keep bundles fresh as agents maintain them</li>
+      </ul>
+    </section>
+
+    <!-- 16. End -->
+    <section class="title-slide">
+      <h2>Thank you</h2>
+      <p class="sub">Questions?</p>
+      <p class="small">Spec: github.com/GoogleCloudPlatform/open-knowledge-format</p>
+    </section>
+
+  </div>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
