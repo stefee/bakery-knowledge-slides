@@ -2,6 +2,8 @@
 
 Slide deck for the Hearth & Wheel / Open Knowledge Format hackathon project, built with [reveal.js](https://revealjs.com) and Vite.
 
+The project itself (knowledge bundle, MCP server and demos) lives in [stefee/bakery-knowledge](https://github.com/stefee/bakery-knowledge).
+
 ```bash
 npm install
 npm run dev       # http://localhost:5173, live reload
